@@ -3,6 +3,7 @@ package com.example.cameratest;
 import java.io.File;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -45,8 +47,9 @@ public class MainActivity extends Activity {
 		// TODO: Create an intent with the action
 		// MediaStore.ACTION_IMAGE_CAPTURE
 		
-		// ComponentName cn = new ComponentName("es.softwareprocess.bogopicgen",
-		// "es.softwareprocess.bogopicgen.BogoPicGenActivity");
+		
+		ComponentName cn = new ComponentName("es.softwareprocess.bogopicgen",
+							"es.softwareprocess.bogopicgen.BogoPicGenActivity");
 		// ComponentName cn = new ComponentName("com.android.camera",
 		// "com.android.camera.Camera");
 		// intent.setComponent(cn);
@@ -66,13 +69,31 @@ public class MainActivity extends Activity {
 		imageFileUri = Uri.fromFile(imageFile);
 
 		// TODO: Put in the intent in the tag MediaStore.EXTRA_OUTPUT the URI
-		
+		Intent intent =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT,imageFileUri);
 		// TODO: Start the activity (expecting a result), with the code
 		// CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE
+		startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 		
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
+			if (resultCode == RESULT_OK){
+				TextView status = (TextView) findViewById(R.id.status);
+				status.setText("We're Good");
+				ImageButton ib = (ImageButton) findViewById(R.id.TakeAPhoto);
+				Drawable drawable = Drawable.createFromPath(imageFileUri.getPath());
+				ib.setImageDrawable(drawable);
+			}	else if (resultCode == RESULT_CANCELED){
+				TextView status = (TextView) findViewById(R.id.status);
+				status.setText("We're Not Good");				
+			}
+			else {
+				TextView status = (TextView) findViewById(R.id.status);
+				status.setText("We're Not Sure");	
+			}
+		}
 		// TODO: Handle the results from CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE
 		
 		// TODO: Handle the cases for RESULT_OK, RESULT_CANCELLED, and others
@@ -82,6 +103,11 @@ public class MainActivity extends Activity {
 		//		button.setImageDrawable(Drawable.createFromPath(imageFileUri.getPath()));
 		// When the result is CANCELLED, set text "Photo canceled" in the status
 		// Otherwise, set text "Not sure what happened!" with the resultCode
+		
+		
+		
+		
+		
 		
 	}
 }
